@@ -1,0 +1,8 @@
+{
+
+
+  "block.chonky_reactors.assembly_block": "Assembly Block",
+
+  "gui.chonky_reactors.assembly_block.name": "Assembler",
+  "gui.chonky_reactors.widget.energy.tooltip": "%s / %s FE"
+}
