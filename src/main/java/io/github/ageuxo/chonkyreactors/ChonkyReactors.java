@@ -22,5 +22,7 @@ public class ChonkyReactors {
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
         ModRecipes.register(modEventBus);
+        ModRecipes.Types.register(modEventBus);
+
     }
 }
