@@ -25,7 +25,7 @@ public class ModRecipeProvider extends RecipeProvider implements IConditionBuild
         AssemblyRecipeBuilder.builder(Blocks.IRON_TRAPDOOR, 4)
                 .requires(new TagKey<>(ForgeRegistries.ITEMS.getRegistryKey(), ResourceLocation.tryParse("forge:ingots/iron")), 4)
                 .requiresEnergy(32)
-                .save(consumer, ModUtils.modRL( "connecting_face_block_from_iron_assembly"));
+                .save(consumer, ModUtils.modRL( "iron_trapdoor_from_iron_assembly"));
 
     }
 
