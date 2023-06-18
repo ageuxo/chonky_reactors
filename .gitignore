@@ -28,3 +28,4 @@ forge*changelog.txt
 /CREDITS.txt
 /changelog.txt
 /src/main/java/com/example/examplemod/
+/src/generated/resources/.cache/
