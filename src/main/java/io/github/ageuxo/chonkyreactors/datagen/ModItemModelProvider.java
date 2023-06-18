@@ -1,6 +1,7 @@
 package io.github.ageuxo.chonkyreactors.datagen;
 
 import io.github.ageuxo.chonkyreactors.ChonkyReactors;
+import io.github.ageuxo.chonkyreactors.item.ModItems;
 import io.github.ageuxo.chonkyreactors.util.ModUtils;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -18,7 +19,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-
+        simpleItem(ModItems.RAW_PHLOGITE);
     }
 
     private ItemModelBuilder simpleItem(RegistryObject<Item> item){

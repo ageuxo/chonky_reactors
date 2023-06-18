@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "chonky_reactors:assembly_block"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "chonky_reactors:blocks/assembly_block"
+}

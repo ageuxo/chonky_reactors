@@ -3,6 +3,7 @@ package io.github.ageuxo.chonkyreactors.datagen;
 import io.github.ageuxo.chonkyreactors.ChonkyReactors;
 import io.github.ageuxo.chonkyreactors.block.ModBlocks;
 import io.github.ageuxo.chonkyreactors.block.custom.AssemblyBlock;
+import io.github.ageuxo.chonkyreactors.util.ModUtils;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -26,13 +27,21 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        facingBlock(ModBlocks.ASSEMBLY_BLOCK);
+        facingBlock(ModBlocks.ASSEMBLY_BLOCK, "machine/assembly");
         simpleBlockItem(ModBlocks.ASSEMBLY_BLOCK.get(), itemModels().getExistingFile(modLoc("block/assembly_block")));
+
+        oreBlockWithItem(ModBlocks.PHLOGITE_ORE_BLOCK);
 
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject){
         simpleBlockWithItem(blockRegistryObject.get(), cubeAll(blockRegistryObject.get()));
+    }
+
+    private void oreBlockWithItem(RegistryObject<Block> blockRegistryObject){
+        simpleBlockWithItem(blockRegistryObject.get(), models()
+                .withExistingParent(blockRegistryObject.getId().getPath(), ModUtils.modRL("block/ore_template"))
+                .texture("overlay", ModUtils.modRL("block/ore/"+ blockRegistryObject.getId().getPath()) ));
     }
 
     private void logBlockWithItem(RegistryObject<Block> blockRegistryObject){
@@ -46,9 +55,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlock(blockRegistryObject.get(), models().cross(ForgeRegistries.BLOCKS.getKey(blockRegistryObject.get()).getPath(), blockTexture(blockRegistryObject.get())).renderType("cutout"));
     }
 
-    private void facingBlock(RegistryObject<Block> blockRegistryObject){
+    private void facingBlock(RegistryObject<Block> blockRegistryObject, String blockFolder){
         VariantBlockStateBuilder builder = getVariantBuilder(blockRegistryObject.get());
-        ResourceLocation baseTexture = blockTexture(blockRegistryObject.get());
+        ResourceLocation baseTexture = ModUtils.modRL("block/"+blockFolder+"/"+blockRegistryObject.getId().getPath());
         BlockModelBuilder baseModel = models().cube(blockRegistryObject.getId().toString(),
                 baseTexture.withSuffix("_bottom"),
                 baseTexture.withSuffix("_top"),

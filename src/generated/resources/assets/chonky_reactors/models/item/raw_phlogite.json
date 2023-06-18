@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "chonky_reactors:item/raw_phlogite"
+  }
+}

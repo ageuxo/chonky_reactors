@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "chonky_reactors:assembly_block"
+    "chonky_reactors:assembly_block",
+    "chonky_reactors:phlogite_ore_block"
   ]
 }

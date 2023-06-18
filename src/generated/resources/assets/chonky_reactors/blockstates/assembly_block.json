@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "chonky_reactors:block/assembly_block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "chonky_reactors:block/assembly_block"
+    },
+    "facing=south": {
+      "model": "chonky_reactors:block/assembly_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "chonky_reactors:block/assembly_block",
+      "y": 270
+    }
+  }
+}

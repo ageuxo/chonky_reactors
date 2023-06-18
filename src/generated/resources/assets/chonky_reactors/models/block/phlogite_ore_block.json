@@ -1,0 +1,6 @@
+{
+  "parent": "chonky_reactors:block/ore_template",
+  "textures": {
+    "overlay": "chonky_reactors:block/ore/phlogite_ore_block"
+  }
+}
