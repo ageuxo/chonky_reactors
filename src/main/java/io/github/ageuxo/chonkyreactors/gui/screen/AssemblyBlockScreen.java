@@ -33,9 +33,6 @@ public class AssemblyBlockScreen extends AbstractMachineScreen<AbstractMachineMe
 //    vars imageWidth/imageHeight = width/height of Bg plate in image
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float pPartialTick, int pMouseX, int pMouseY) {
-//        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-//        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-//        RenderSystem.setShaderTexture(0, TEXTURE);
         int x = ((width-imageWidth)/2);
         int y = ((height-imageHeight)/2);
 
