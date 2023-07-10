@@ -25,6 +25,7 @@ public class ModTagsProvider {
         @Override
         protected void addTags(HolderLookup.@NotNull Provider pProvider) {
             this.tag(ModTags.MACHINES).add(ModBlocks.ASSEMBLY_BLOCK.get());
+            this.tag(ModTags.REACTOR_TIER_1).add(ModBlocks.PLATING_TIER_1.get());
 
         }
     }

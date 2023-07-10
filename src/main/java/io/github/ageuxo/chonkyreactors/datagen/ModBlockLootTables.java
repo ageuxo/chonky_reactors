@@ -26,6 +26,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     protected void generate() {
         dropSelf(ModBlocks.ASSEMBLY_BLOCK.get());
         dropSelf(ModBlocks.REACTOR_CONTROLLER_BLOCK.get());
+        dropSelf(ModBlocks.PLATING_TIER_1.get());
 
         add(ModBlocks.PHLOGITE_ORE_BLOCK.get(),
                 (block)-> createVariantOreDrop(block, ModItems.RAW_PHLOGITE.get(), 2f, 5f));

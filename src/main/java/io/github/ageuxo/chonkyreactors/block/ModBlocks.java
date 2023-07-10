@@ -26,6 +26,8 @@ public class ModBlocks {
     public static final RegistryObject<Block> ASSEMBLY_BLOCK = registerBlock("assembly_block", ()-> new AssemblyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).instrument(NoteBlockInstrument.IRON_XYLOPHONE).requiresCorrectToolForDrops().strength(3.5F)));
     public static final RegistryObject<Block> REACTOR_CONTROLLER_BLOCK = registerBlock("reactor_controller_block", ()-> new ReactorControllerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).instrument(NoteBlockInstrument.IRON_XYLOPHONE).requiresCorrectToolForDrops().strength(1.5F)));
 
+    public static final RegistryObject<Block> PLATING_TIER_1 = registerBlock("simple_plating", ()-> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.COLOR_GRAY).requiresCorrectToolForDrops().strength(1.5f)));
+
     public static final RegistryObject<Block> PHLOGITE_ORE_BLOCK = registerBlock("phlogite_ore_block",
             ()->new DropExperienceBlock(BlockBehaviour.Properties.copy(Blocks.DIAMOND_ORE), UniformInt.of(2, 6)));
 

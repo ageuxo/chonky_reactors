@@ -31,7 +31,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(ModBlocks.ASSEMBLY_BLOCK.get(), itemModels().getExistingFile(modLoc("block/assembly_block")));
 
         oreBlockWithItem(ModBlocks.PHLOGITE_ORE_BLOCK);
-
+        simpleBlockWithItem(ModBlocks.PLATING_TIER_1.get(), models().cubeAll("simple_plating", ModUtils.modRL("block/simple_plating")));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject){
