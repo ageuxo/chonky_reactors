@@ -2,6 +2,7 @@ package io.github.ageuxo.chonkyreactors.block;
 
 import io.github.ageuxo.chonkyreactors.ChonkyReactors;
 import io.github.ageuxo.chonkyreactors.block.custom.AssemblyBlock;
+import io.github.ageuxo.chonkyreactors.block.custom.ReactorControllerBlock;
 import io.github.ageuxo.chonkyreactors.item.ModItems;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.item.BlockItem;
@@ -23,6 +24,7 @@ public class ModBlocks {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ChonkyReactors.MODID);
 
     public static final RegistryObject<Block> ASSEMBLY_BLOCK = registerBlock("assembly_block", ()-> new AssemblyBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).instrument(NoteBlockInstrument.IRON_XYLOPHONE).requiresCorrectToolForDrops().strength(3.5F)));
+    public static final RegistryObject<Block> REACTOR_CONTROLLER_BLOCK = registerBlock("reactor_controller_block", ()-> new ReactorControllerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.METAL).instrument(NoteBlockInstrument.IRON_XYLOPHONE).requiresCorrectToolForDrops().strength(1.5F)));
 
     public static final RegistryObject<Block> PHLOGITE_ORE_BLOCK = registerBlock("phlogite_ore_block",
             ()->new DropExperienceBlock(BlockBehaviour.Properties.copy(Blocks.DIAMOND_ORE), UniformInt.of(2, 6)));

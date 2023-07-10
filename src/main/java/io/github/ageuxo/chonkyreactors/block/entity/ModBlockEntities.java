@@ -15,6 +15,9 @@ public class ModBlockEntities {
             .register("assembly_block_entity", ()->BlockEntityType.Builder.of(AssemblyBlockEntity::new,
                                                     ModBlocks.ASSEMBLY_BLOCK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<ReactorBlockEntity>> REACTOR_BLOCK_ENTITY = BLOCK_ENTITIES
+            .register("reactor_block_entity", ()->BlockEntityType.Builder.of(ReactorBlockEntity::new,
+                    ModBlocks.REACTOR_CONTROLLER_BLOCK.get()).build(null));
 
     public static void register(IEventBus eventBus){
         BLOCK_ENTITIES.register(eventBus);

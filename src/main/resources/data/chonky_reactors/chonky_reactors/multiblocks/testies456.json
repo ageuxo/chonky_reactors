@@ -1,0 +1,29 @@
+{
+  "name": "testies456",
+  "parts": [
+    {
+      "blocks": [
+        "minecraft:cobblestone"
+      ],
+      "maxX": 3,
+      "maxY": 3,
+      "maxZ": 3,
+      "minX": 1,
+      "minY": 3,
+      "minZ": 1,
+      "name": "cobble_wall"
+    },
+    {
+      "blocks": [
+        "minecraft:glowstone"
+      ],
+      "maxX": 3,
+      "maxY": 1,
+      "maxZ": 3,
+      "minX": 3,
+      "minY": 1,
+      "minZ": 3,
+      "name": "cobble_floor"
+    }
+  ]
+}

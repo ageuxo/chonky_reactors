@@ -1,0 +1,17 @@
+{
+  "name": "test_multiblock5",
+  "parts": [
+    {
+      "blocks": [
+        "minecraft:cobblestone"
+      ],
+      "maxX": 3,
+      "maxY": 3,
+      "maxZ": 3,
+      "minX": 1,
+      "minY": 3,
+      "minZ": 1,
+      "name": "test_part"
+    }
+  ]
+}
