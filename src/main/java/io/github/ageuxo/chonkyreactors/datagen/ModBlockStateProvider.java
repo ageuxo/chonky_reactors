@@ -64,7 +64,8 @@ public class ModBlockStateProvider extends BlockStateProvider {
                 baseTexture,
                 baseTexture.withSuffix("_back"),
                 baseTexture.withSuffix("_left"),
-                baseTexture.withSuffix("_right"));
+                baseTexture.withSuffix("_right"))
+                .texture("particle", baseTexture);
 
         builder.forAllStates(state -> {
             Direction facing = state.getValue(AssemblyBlock.FACING);

@@ -3,6 +3,7 @@ package io.github.ageuxo.chonkyreactors;
 import com.mojang.logging.LogUtils;
 import io.github.ageuxo.chonkyreactors.block.ModBlocks;
 import io.github.ageuxo.chonkyreactors.block.entity.ModBlockEntities;
+import io.github.ageuxo.chonkyreactors.gui.menu.ModMenuTypes;
 import io.github.ageuxo.chonkyreactors.item.ModItems;
 import io.github.ageuxo.chonkyreactors.item.crafting.ModRecipes;
 import io.github.ageuxo.chonkyreactors.multiblock.MultiblockRegistry;
@@ -22,6 +23,7 @@ public class ChonkyReactors {
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
         ModRecipes.register(modEventBus);
         ModRecipes.Types.register(modEventBus);
         MultiblockRegistry.MB_DEFS.register(modEventBus);

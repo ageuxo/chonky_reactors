@@ -57,6 +57,7 @@ public class AssemblyBlock extends BaseEntityBlock {
             BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
             if (blockEntity instanceof AssemblyBlockEntity){
                 ((AssemblyBlockEntity) blockEntity).drops();
+                blockEntity.setRemoved();
             }
         }
     }

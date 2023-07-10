@@ -4,6 +4,7 @@
     "down": "chonky_reactors:block/machine/assembly/assembly_block_bottom",
     "east": "chonky_reactors:block/machine/assembly/assembly_block_left",
     "north": "chonky_reactors:block/machine/assembly/assembly_block",
+    "particle": "chonky_reactors:block/machine/assembly/assembly_block",
     "south": "chonky_reactors:block/machine/assembly/assembly_block_back",
     "up": "chonky_reactors:block/machine/assembly/assembly_block_top",
     "west": "chonky_reactors:block/machine/assembly/assembly_block_right"
