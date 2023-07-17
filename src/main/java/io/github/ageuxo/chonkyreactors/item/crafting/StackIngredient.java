@@ -2,91 +2,69 @@ package io.github.ageuxo.chonkyreactors.item.crafting;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
+import com.mojang.datafixers.util.Either;
 import com.mojang.logging.LogUtils;
-import net.minecraft.nbt.CompoundTag;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraftforge.common.crafting.AbstractIngredient;
-import net.minecraftforge.common.crafting.CraftingHelper;
 import net.minecraftforge.common.crafting.IIngredientSerializer;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
-
 
 
 public class StackIngredient extends AbstractIngredient implements Predicate<ItemStack> {
     public static final StackIngredient EMPTY = new StackIngredient(ItemStack.EMPTY);
     private static final Logger LOGGER = LogUtils.getLogger();
-    private final ItemStack stack;
+
+    public static final Codec<Either<TagKey<Item>, List<ItemStack>>> VALUE_CODEC = Codec.either(TagKey.hashedCodec(ForgeRegistries.Keys.ITEMS), ItemStack.CODEC.listOf());
+    public static final Codec<StackIngredient> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    VALUE_CODEC.fieldOf("values").forGetter(StackIngredient::getValues),
+                    Codec.INT.fieldOf("count").forGetter(StackIngredient::getCount)
+            ).apply(instance, StackIngredient::new));
+
     private final TagKey<Item> tagKey;
+    private final ItemStack[] itemStacks;
     private final int count;
-    private final Type recipeType;
-
-    public StackIngredient(JsonObject object) {
-        ItemStack ingredientItem = null;
-        TagKey<Item> tmpTag;
-        if (!object.has("count") || object.get("count").getAsInt() < 1){
-            throw new JsonParseException("StackIngredient needs a 'count' property of at least 1");
-        }
-
-        CompoundTag nbt = null;
-
-        if (object.has("nbt")){
-            nbt = CraftingHelper.getNBT(object.get("nbt"));
-        }
-        if (object.has("item") && !object.has("tag")){
-            ingredientItem = new ItemStack(ForgeRegistries.ITEMS.getValue(ResourceLocation.tryParse(object.get("item").getAsString())), object.get("count").getAsInt(), nbt);
-            tmpTag = null;
-            this.recipeType = Type.STACK;
-            if (ingredientItem != ItemStack.EMPTY && ingredientItem.getItem() != Items.AIR) {
-//                this.stack = ingredientItem;
-                count = ingredientItem.getCount();
-            } else {
-                throw new JsonParseException("StackIngredient has invalid 'item' property: "+ ingredientItem);
-            }
-        } else if (object.has("tag") && !object.has("item")){
-            TagKey<Item> readKey = new TagKey<>(ForgeRegistries.ITEMS.getRegistryKey(), new ResourceLocation( object.get("tag").getAsString() ));
-            this.recipeType = Type.TAG_KEY;
-            if (!AssemblyRecipe.ITAG_MANAGER.getTag(readKey).isBound()) {
-                tmpTag = readKey;
-                count = object.get("count").getAsInt();
-            } else {
-                throw new JsonParseException("StackIngredient has invalid 'tag' property: "+ object.get("tag").getAsString());
-            }
-        } else if (!object.has("item") && !object.has("tag")){
-            throw new JsonParseException("StackIngredient needs an 'item' or a 'tag' property");
-        } else {
-            throw new JsonParseException("StackIngredient needs EITHER an 'item' OR a 'tag' property, NEVER both!");
-        }
-
-        this.stack = ingredientItem;
-        this.tagKey = tmpTag;
-    }
 
     public StackIngredient(ItemStack itemStack) {
-        this.stack = itemStack;
-        this.count = itemStack.getCount();
-        this.tagKey = null;
-        this.recipeType = Type.STACK;
-//        this.tagIngrCount = 0;
+        this(List.of(itemStack), itemStack.getCount());
     }
 
-    public StackIngredient(TagKey<Item> tagKey, int tagIngrCount){
-        this.stack = null;
-        this.recipeType = Type.TAG_KEY;
-        this.count = tagIngrCount;
-        this.tagKey = tagKey;
-//        this.tagIngrCount = tagIngrCount;
+    public StackIngredient(Either<TagKey<Item>, List<ItemStack>> either, int count) throws IllegalArgumentException {
+        this.count = count;
+        if (either.left().isPresent()){
+            this.tagKey = either.left().get();
+            this.itemStacks = null;
+        } else{
+            this.tagKey = null;
+            this.itemStacks = either.right().orElseThrow(IllegalArgumentException::new).toArray(getItemList().toArray(new ItemStack[0]));
+        }
+    }
+
+    public StackIngredient(List<ItemStack> itemStacks, int count) {
+        this.itemStacks = itemStacks.toArray(new ItemStack[0]);
+        this.tagKey = null;
+        this.count = count;
+    }
+
+    public StackIngredient(TagKey<Item> itemTagKey, int count){
+        this.itemStacks = null;
+        this.tagKey = itemTagKey;
+        this.count = count;
     }
 
     @Override
@@ -100,90 +78,66 @@ public class StackIngredient extends AbstractIngredient implements Predicate<Ite
     }
 
     @Override
-    public JsonElement toJson() {
-        JsonObject ret = new JsonObject();
-        JsonObject ingInput;
-        if (this.stack != null){
-            ingInput = stackToJson(this.stack);
-        } else if (this.tagKey != null){
-            ingInput = tagToJson(this.getTagKey(), this.getCount());
+    public @NotNull JsonElement toJson() {
+        return CODEC.encodeStart(JsonOps.INSTANCE, this).getOrThrow(false, LOGGER::error).getAsJsonObject();
+
+    }
+
+    @Override
+    public @NotNull ItemStack[] getItems(){
+        return Objects.requireNonNullElseGet(this.itemStacks, () -> ForgeRegistries.ITEMS.tags().getTag(this.tagKey).stream().map(ItemStack::new).toArray(ItemStack[]::new));
+    }
+
+    public @NotNull Either<TagKey<Item>, List<ItemStack>> getValues(){
+        if (this.tagKey != null){
+            return Either.left(this.tagKey);
         } else {
-            throw new JsonParseException("Invalid StackIngredient: Stack and TagKey null!");
+            return Either.right(Arrays.stream(this.itemStacks).toList());
+        }
+    }
+
+    public List<ItemStack> getItemList(){
+        if (this.tagKey != null){
+            List<ItemStack> stackList = new ArrayList<>();
+            ForgeRegistries.ITEMS.tags().getTag(this.tagKey).stream().forEach(item -> stackList.add(new ItemStack(item)));
+            return stackList;
+        } else {
+            return Arrays.stream(this.itemStacks).toList();
         }
 
-        ret.add("stack_ingredient", ingInput);
-
-        return ret;
-    }
-
-    public JsonObject stackToJson(ItemStack stack){
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("item", ForgeRegistries.ITEMS.getKey(stack.getItem()).toString());
-        jsonObject.addProperty("count", stack.getCount());
-        if (stack.getTag() != null){
-            jsonObject.addProperty("nbt", stack.getTag().toString());
-        }
-        return jsonObject;
-    }
-
-    public JsonObject tagToJson(TagKey<Item> tagKey, int count){
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("tag", tagKey.location().toString());
-        jsonObject.addProperty("count", count);
-        return jsonObject;
-    }
-
-    public ItemStack getStack(){
-        return this.stack;
     }
 
     public int getCount(){
         return this.count;
     }
 
-    public TagKey<Item> getTagKey(){
-        return this.tagKey;
+    //TODO remove
+    public boolean containsItem(ItemStack stack){
+        return getItemList().stream().anyMatch(stack1 -> stack1.is(stack.getItem()));
     }
 
-    public Type getRecipeType(){
-        return this.recipeType;
+    @Override
+    public boolean isEmpty() {
+        return this.getItemList().isEmpty();
     }
-
-    public enum Type implements StringRepresentable{
-        STACK("stack"),
-        TAG_KEY("tag_key");
-
-        private final String name;
-
-        Type(String name) {
-            this.name = name;
-        }
-
-        @Override
-        public String getSerializedName() {
-            return this.name;
-        }
-
-    }
-
-
 
     public static class Serializer implements IIngredientSerializer<StackIngredient>{
         public static final Serializer INSTANCE = new Serializer();
 
         @Override
         public @NotNull StackIngredient parse(FriendlyByteBuf buffer) {
-            return new StackIngredient(buffer.readItem());
+            return buffer.readJsonWithCodec(CODEC);
         }
 
         @Override
         public @NotNull StackIngredient parse(@NotNull JsonObject json) {
-            return new StackIngredient(json);
+            return CODEC.parse(JsonOps.INSTANCE, json).getOrThrow(false, LOGGER::error);
         }
 
         @Override
-        public void write(FriendlyByteBuf buffer, StackIngredient ingredient) {
-            buffer.writeItemStack(ingredient.stack, false);
+        public void write(FriendlyByteBuf buffer, @NotNull StackIngredient ingredient) {
+//            buffer.writeItemStack(ingredient.stack, false);
+            buffer.writeJsonWithCodec(CODEC, ingredient);
         }
     }
 

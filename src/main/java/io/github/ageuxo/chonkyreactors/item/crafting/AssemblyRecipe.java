@@ -1,34 +1,43 @@
 package io.github.ageuxo.chonkyreactors.item.crafting;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.logging.LogUtils;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.GsonHelper;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.crafting.CraftingHelper;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.tags.ITagManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
+
+import java.util.List;
 
 public class AssemblyRecipe implements Recipe<SimpleMachineContainer> {
 
     private final ResourceLocation id;
     private final ItemStack output;
-    private final NonNullList<StackIngredient> recipeIngredients;
+    private final List<StackIngredient> recipeIngredients;
     private final int energyCost;
     private static final Logger LOGGER = LogUtils.getLogger();
-    protected static final ITagManager<Item> ITAG_MANAGER = ForgeRegistries.ITEMS.tags();
+    public static final Codec<AssemblyRecipe> CODEC = RecordCodecBuilder.create(instance ->
+            instance.group(
+                    ResourceLocation.CODEC.fieldOf("id").forGetter(AssemblyRecipe::getId),
+                    ItemStack.CODEC.fieldOf("output").forGetter(AssemblyRecipe::getOutput),
+                    StackIngredient.CODEC.listOf().fieldOf("ingredients").forGetter(AssemblyRecipe::getStackIngredients),
+                    Codec.INT.fieldOf("energy_cost").forGetter(AssemblyRecipe::getEnergyCost)
+            ).apply(instance, AssemblyRecipe::new));
+
+    public AssemblyRecipe(ResourceLocation id, ItemStack output, List<StackIngredient> recipeIngredients,  int energyCost) {
+        this(id, output, NonNullList.withSize(recipeIngredients.size(), recipeIngredients.get(0)), energyCost);
+    }
 
     public AssemblyRecipe(ResourceLocation id, ItemStack output, NonNullList<StackIngredient> recipeIngredients, int energyCost){
         this.id = id;
@@ -45,21 +54,13 @@ public class AssemblyRecipe implements Recipe<SimpleMachineContainer> {
         }
         return recipeIngredients.stream().allMatch( (ing) -> {
             int keepCount = 0;
-            for (int i = 0; i < pContainer.getInputSize(); i++) {
-                ItemStack stack = pContainer.getItem(i);
-                if (ing.getRecipeType() == StackIngredient.Type.STACK ){
-                    if (ItemStack.matches(stack, ing.getStack()) || (stack.is(ing.getStack().getItem())) ) {
-                        if (stack.getCount() >= ing.getCount() || (stack.getCount() + keepCount) >= ing.getCount()){
-                            return true;
-                        } else {
-                            keepCount = keepCount + stack.getCount();
-                        }
-                    }
-                } else if (stack.getTags().anyMatch(tagKey -> tagKey.equals(ing.getTagKey()))){
-                    if (stack.getCount() >= ing.getCount() || (stack.getCount() + keepCount) >= ing.getCount()){
+            for (int index : pContainer.getInputSlots()) {
+                ItemStack stack = pContainer.getItem(index);
+                if (ing.test(stack)){
+                    if (stack.getCount() + keepCount >= ing.getCount()){
                         return true;
                     } else {
-                        keepCount = keepCount + stack.getCount();
+                        keepCount += stack.getCount();
                     }
                 }
             }
@@ -68,7 +69,7 @@ public class AssemblyRecipe implements Recipe<SimpleMachineContainer> {
     }
 
     @Override
-    public ItemStack assemble(@NotNull SimpleMachineContainer container, @NotNull RegistryAccess registryAccess) {
+    public @NotNull ItemStack assemble(@NotNull SimpleMachineContainer container, @NotNull RegistryAccess registryAccess) {
         return output;
     }
 
@@ -79,6 +80,10 @@ public class AssemblyRecipe implements Recipe<SimpleMachineContainer> {
 
     @Override
     public @NotNull ItemStack getResultItem(@NotNull RegistryAccess registryAccess) {
+        return output.copy();
+    }
+
+    public ItemStack getOutput(){
         return output.copy();
     }
 
@@ -97,7 +102,7 @@ public class AssemblyRecipe implements Recipe<SimpleMachineContainer> {
         return Type.INSTANCE;
     }
 
-    public NonNullList<StackIngredient> getStackIngredients(){
+    public List<StackIngredient> getStackIngredients(){
         return this.recipeIngredients;
     }
 
@@ -116,8 +121,8 @@ public class AssemblyRecipe implements Recipe<SimpleMachineContainer> {
 //        public static final ResourceLocation ID = new ResourceLocation(ChonkyReactors.MODID, "assembly");
 
         @Override
-        public @NotNull AssemblyRecipe fromJson(@NotNull ResourceLocation pRecipeId, JsonObject pSerializedRecipe) {
-            ItemStack output = CraftingHelper.getItemStack(pSerializedRecipe.get("result").getAsJsonObject(), true);
+        public @NotNull AssemblyRecipe fromJson(@NotNull ResourceLocation pRecipeId, @NotNull JsonObject pSerializedRecipe) {
+           /* ItemStack output = CraftingHelper.getItemStack(pSerializedRecipe.get("result").getAsJsonObject(), true);
 
             int energyCost = pSerializedRecipe.get("energy_cost").getAsInt();
 
@@ -125,15 +130,16 @@ public class AssemblyRecipe implements Recipe<SimpleMachineContainer> {
             NonNullList<StackIngredient> inputs = NonNullList.withSize(ingredients.size(), StackIngredient.EMPTY);
 
             for (int i = 0; i < inputs.size(); i++){
-                inputs.set(i, new StackIngredient(ingredients.get(i).getAsJsonObject().get("stack_ingredient").getAsJsonObject()) );
+                inputs.set(i,  StackIngredient.Serializer.INSTANCE.parse(ingredients.get(i).getAsJsonObject()));
             }
 
-            return new AssemblyRecipe(pRecipeId, output, inputs, energyCost);
+            return new AssemblyRecipe(pRecipeId, output, inputs, energyCost);*/
+            return AssemblyRecipe.CODEC.parse(JsonOps.INSTANCE, pSerializedRecipe).getOrThrow(false, LOGGER::error);
         }
 
         @Override
         public @Nullable AssemblyRecipe fromNetwork(@NotNull ResourceLocation pRecipeId, FriendlyByteBuf pBuffer) {
-            NonNullList<StackIngredient> inputs = NonNullList.withSize(pBuffer.readInt(), StackIngredient.EMPTY);
+         /*   NonNullList<StackIngredient> inputs = NonNullList.withSize(pBuffer.readInt(), StackIngredient.EMPTY);
 
             for (int i = 0; i < inputs.size(); i++){
                 inputs.set(i, StackIngredient.Serializer.INSTANCE.parse(pBuffer));
@@ -141,18 +147,20 @@ public class AssemblyRecipe implements Recipe<SimpleMachineContainer> {
 
             ItemStack output = pBuffer.readItem();
             int energy = pBuffer.readInt();
-            return new AssemblyRecipe(pRecipeId, output, inputs, energy);
+            return new AssemblyRecipe(pRecipeId, output, inputs, energy);*/
+            return pBuffer.readJsonWithCodec(AssemblyRecipe.CODEC);
         }
 
         @Override
         public void toNetwork(FriendlyByteBuf pBuffer, AssemblyRecipe pRecipe) {
-            pBuffer.writeInt(pRecipe.getStackIngredients().size());
+         /*   pBuffer.writeInt(pRecipe.getStackIngredients().size());
 
             for (StackIngredient ingredient : pRecipe.getStackIngredients()){
                 CraftingHelper.write(pBuffer, ingredient);
             }
             pBuffer.writeItemStack(pRecipe.getResultItem(RegistryAccess.EMPTY), false);
-            pBuffer.writeInt(pRecipe.getEnergyCost());
+            pBuffer.writeInt(pRecipe.getEnergyCost());*/
+            pBuffer.writeJsonWithCodec(AssemblyRecipe.CODEC, pRecipe);
         }
     }
 }

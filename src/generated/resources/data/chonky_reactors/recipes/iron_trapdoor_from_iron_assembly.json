@@ -1,16 +1,15 @@
 {
   "type": "chonky_reactors:assembly",
   "energy_cost": 32,
+  "id": "chonky_reactors:iron_trapdoor_from_iron_assembly",
   "ingredients": [
     {
-      "stack_ingredient": {
-        "count": 4,
-        "tag": "forge:ingots/iron"
-      }
+      "count": 4,
+      "values": "#forge:ingots/iron"
     }
   ],
-  "result": {
-    "count": 4,
-    "item": "minecraft:iron_trapdoor"
+  "output": {
+    "Count": 4,
+    "id": "minecraft:iron_trapdoor"
   }
 }

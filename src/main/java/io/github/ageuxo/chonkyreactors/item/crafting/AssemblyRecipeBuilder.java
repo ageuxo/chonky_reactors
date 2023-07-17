@@ -1,9 +1,10 @@
 package io.github.ageuxo.chonkyreactors.item.crafting;
 
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.mojang.logging.LogUtils;
+import com.mojang.serialization.JsonOps;
 import net.minecraft.advancements.CriterionTriggerInstance;
+import net.minecraft.core.NonNullList;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -13,18 +14,20 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.ItemLike;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class AssemblyRecipeBuilder implements RecipeBuilder {
+    private static final Logger LOGGER = LogUtils.getLogger();
     private final Item result;
     private final int count;
-    private final ArrayList<ItemStack> ingredients = new ArrayList<>();
-    private TagKey<Item> tagKey;
-    private int ingredientCount;
+    private final NonNullList<StackIngredient> ingredients = NonNullList.create();
+ /*   private TagKey<Item> tagKey;
+    private int ingredientCount;*/
     private int energyCost;
 
     public AssemblyRecipeBuilder(ItemLike outItem, int outCount) {
@@ -44,8 +47,8 @@ public class AssemblyRecipeBuilder implements RecipeBuilder {
         return requires(new ItemStack(inItem, inCount));
     }
 
-    public AssemblyRecipeBuilder requires(ItemStack item) {
-        this.ingredients.add(item);
+    public AssemblyRecipeBuilder requires(ItemStack stack) {
+        this.ingredients.add(new StackIngredient(stack));
         return this;
     }
 
@@ -54,12 +57,8 @@ public class AssemblyRecipeBuilder implements RecipeBuilder {
     }
 
     public AssemblyRecipeBuilder requires(TagKey<Item> tagKey, int ingCount) {
-        this.tagKey = tagKey;
-        if (ingCount >= 1) {
-            this.ingredientCount = ingCount;
-        } else {
-            throw new IllegalArgumentException("AssemblyRecipeBuilder requires param 'ingCount' >= 1 to be valid");
-        }
+        ITag<Item> itemTag = ForgeRegistries.ITEMS.tags().getTag(tagKey);
+        this.ingredients.add(new StackIngredient(itemTag.getKey(), ingCount));
         return this;
     }
 
@@ -69,12 +68,12 @@ public class AssemblyRecipeBuilder implements RecipeBuilder {
     }
 
     @Override
-    public AssemblyRecipeBuilder unlockedBy(@NotNull String pCriterionName, @NotNull CriterionTriggerInstance pCriterionTrigger) {
-        return null;
+    public @Nullable AssemblyRecipeBuilder unlockedBy(@NotNull String pCriterionName, @NotNull CriterionTriggerInstance pCriterionTrigger) {
+        return null; //TODO implement advancements
     }
 
     @Override
-    public AssemblyRecipeBuilder group(@Nullable String pGroupName) {
+    public @Nullable AssemblyRecipeBuilder group(@Nullable String pGroupName) {
         return null;
     }
 
@@ -91,16 +90,8 @@ public class AssemblyRecipeBuilder implements RecipeBuilder {
         return this.energyCost;
     }
 
-    public ArrayList<ItemStack> getIngredients() {
+    public NonNullList<StackIngredient> getIngredients() {
         return this.ingredients;
-    }
-
-    public TagKey<Item> getTagKey() {
-        return this.tagKey;
-    }
-
-    public int getIngredientCount() {
-        return this.ingredientCount;
     }
 
     @Override
@@ -108,8 +99,8 @@ public class AssemblyRecipeBuilder implements RecipeBuilder {
 
         if (!getIngredients().isEmpty()) {
             pFinishedRecipeConsumer.accept(new Result(pRecipeId, this.getResult(), this.getCount(), this.getEnergyCost(), this.getIngredients()));
-        } else if (getTagKey() != null) {
-            pFinishedRecipeConsumer.accept(new Result(pRecipeId, this.getResult(), this.getCount(), this.getEnergyCost(), this.getTagKey(), this.getIngredientCount()));
+       /* } else if (getTagKey() != null) {
+            pFinishedRecipeConsumer.accept(new Result(pRecipeId, this.getResult(), this.getCount(), this.getEnergyCost(), this.getTagKey()));*/
         } else {
             throw new IllegalStateException("AssemblyRecipeBuilder with invalid result");
         }
@@ -120,36 +111,36 @@ public class AssemblyRecipeBuilder implements RecipeBuilder {
         private final ResourceLocation id;
         private final Item result;
         private final int count;
-        private final ArrayList<ItemStack> ingredients;
-        private final TagKey<Item> tagKey;
-        private final int tagIngrCount;
+        private final NonNullList<StackIngredient> ingredients;
+//        private final TagKey<Item> tagKey;
+//        private final int tagIngrCount;
         private final int energyCost;
 
-        public Result(ResourceLocation id, Item result, int resultCount, int energyCost, TagKey<Item> tagKey, int tagIngrCount) {
+        /*public Result(ResourceLocation id, Item result, int resultCount, int energyCost, TagKey<Item> tagKey, int tagIngrCount) {
             this(id, result, resultCount, energyCost, null, tagKey, tagIngrCount);
         }
 
         public Result(ResourceLocation id, Item result, int resultCount, int energyCost, ArrayList<ItemStack> ingredients) {
             this(id, result, resultCount, energyCost, ingredients, null, 0);
-        }
+        }*/
 
-        public Result(ResourceLocation id, Item result, int resultCount, int energyCost, ArrayList<ItemStack> ingredients, TagKey<Item> tagKey, int tagIngrCount) {
+        public Result(ResourceLocation id, Item result, int resultCount, int energyCost, NonNullList<StackIngredient> ingredients) {
             this.id = id;
             this.result = result;
             this.count = resultCount;
             this.ingredients = ingredients;
-            this.tagIngrCount = tagIngrCount;
-            this.tagKey = tagKey;
+//            this.tagIngrCount = tagIngrCount;
+//            this.tagKey = tagKey;
             this.energyCost = energyCost;
         }
 
         @Override
         public void serializeRecipeData(@NotNull JsonObject pJson) {
-            JsonArray jsonArray = new JsonArray();
+        /*    JsonArray jsonArray = new JsonArray();
 
             if (this.ingredients != null && !this.ingredients.isEmpty()) {
-                for (ItemStack itemStack : this.ingredients) {
-                    jsonArray.add(new StackIngredient(itemStack).toJson());
+                for (StackIngredient ingredient : this.ingredients) {
+                    jsonArray.add(ingredient.toJson());
                 }
             } else if (this.tagKey != null && this.tagIngrCount > 1) {
                 jsonArray.add(new StackIngredient(this.tagKey, this.tagIngrCount).toJson());
@@ -162,7 +153,18 @@ public class AssemblyRecipeBuilder implements RecipeBuilder {
             jsonObject.addProperty("count", this.count);
 
             pJson.add("result", jsonObject);
-            pJson.add("energy_cost", new JsonPrimitive(this.energyCost));
+            pJson.add("energy_cost", new JsonPrimitive(this.energyCost));*/
+            var entries = pJson.entrySet();
+
+            AssemblyRecipe recipe = new AssemblyRecipe(this.id, new ItemStack(this.result, this.count), this.ingredients, this.energyCost);
+            JsonObject recipeJson = AssemblyRecipe.CODEC.encodeStart(JsonOps.INSTANCE, recipe).getOrThrow(false, LOGGER::error).getAsJsonObject();
+            recipeJson.entrySet().forEach( (entry)-> pJson.add( entry.getKey(), entry.getValue() ));
+
+
+/*            for (Map.Entry<String, JsonElement> entry : entries) {
+                pJson.add(entry.getKey(), entry.getValue());
+            }*/
+
         }
 
         @Override

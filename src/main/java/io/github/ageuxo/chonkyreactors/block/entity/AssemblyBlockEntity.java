@@ -235,27 +235,16 @@ public class AssemblyBlockEntity extends BlockEntity implements MenuProvider {
             for (StackIngredient ingredient : entity.currentRecipe.getStackIngredients()){
 
                 int keepCount = 0;
-                for (int index = 0; index < container.getInputSize(); index++ ) {
+                for (int index : container.getInputSlots()) {
                     ItemStack stack = container.getItem(index);
-                    if (ingredient.getRecipeType() == StackIngredient.Type.STACK ){
-                        if (ItemStack.matches(stack, ingredient.getStack()) || (stack.is(ingredient.getStack().getItem())) ) {
-                            if (stack.getCount() >= ingredient.getCount() || (stack.getCount() + keepCount) >= ingredient.getCount()){
-                                entity.itemHandler.extractItem(index, ingredient.getCount(), false);
-                                entity.resetProgress();
-                                counter++;
-                                break;
-                            } else{
-                                keepCount = entity.itemHandler.extractItem(index, ingredient.getCount(), false).getCount() + keepCount;
-                            }
-                        }
-                    } else if (stack.getTags().anyMatch(tagKey -> tagKey.equals(ingredient.getTagKey()))){
-                        if (stack.getCount() >= ingredient.getCount() || (stack.getCount() + keepCount) >= ingredient.getCount()){
+                    if (ingredient.containsItem(stack)){
+                        if ((stack.getCount() + keepCount) >= ingredient.getCount()){
                             entity.itemHandler.extractItem(index, ingredient.getCount(), false);
                             entity.resetProgress();
                             counter++;
                             break;
-                        } else{
-                            keepCount = entity.itemHandler.extractItem(index, stack.getCount(), false).getCount() + keepCount;
+                        } else {
+                            keepCount += entity.itemHandler.extractItem(index, ingredient.getCount(), false).getCount();
                         }
                     }
                 }
@@ -265,8 +254,8 @@ public class AssemblyBlockEntity extends BlockEntity implements MenuProvider {
             // Output items, since we know there is enough space
             if (counter >= entity.currentRecipe.getStackIngredients().size()){
                 ItemStack stack = entity.currentRecipe.getResultItem(entity.getLevel().registryAccess());
-                for (int outSlot = 0; outSlot < container.getOutputSize(); outSlot++){
-                    stack = entity.itemHandler.insertItem(outSlot, stack, false);
+                for (int index : container.getOutputSlots()){
+                    stack = entity.itemHandler.insertItem(index, stack, false);
                     if (stack.isEmpty()){
                         return;
                     }
@@ -293,7 +282,7 @@ public class AssemblyBlockEntity extends BlockEntity implements MenuProvider {
     }
 
     private static boolean canOutput(SimpleMachineContainer container, ItemStack recipeOutput){
-        for (int index = 0; index < container.getOutputSize(); index++){
+        for (int index = container.getOutputOffset(); index < container.getOutputOffset() + container.getOutputSize(); index++){
             if (container.canPlaceItem(index, recipeOutput)) {
                 if (container.getItem(index).isEmpty()) {
                     return true;
