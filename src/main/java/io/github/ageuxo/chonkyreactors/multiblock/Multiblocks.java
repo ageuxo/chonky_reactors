@@ -25,50 +25,46 @@ public class Multiblocks {
 
 
     public static void bootstrap(BootstapContext<MultiblockDefinition> context){
-        register(context, TEST_MULTIBLOCK, new MultiblockDefinition("test_multiblock", List.of(
+        context.register(TEST_MULTIBLOCK, new MultiblockDefinition("test_multiblock", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK1, new MultiblockDefinition("test_multiblock1", List.of(
+        context.register(TEST_MULTIBLOCK1, new MultiblockDefinition("test_multiblock1", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK2, new MultiblockDefinition("test_multiblock2", List.of(
+        context.register(TEST_MULTIBLOCK2, new MultiblockDefinition("test_multiblock2", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK3, new MultiblockDefinition("test_multiblock3", List.of(
+        context.register(TEST_MULTIBLOCK3, new MultiblockDefinition("test_multiblock3", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK4, new MultiblockDefinition("test_multiblock4", List.of(
+        context.register(TEST_MULTIBLOCK4, new MultiblockDefinition("test_multiblock4", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK5, new MultiblockDefinition("test_multiblock5", List.of(
+        context.register(TEST_MULTIBLOCK5, new MultiblockDefinition("test_multiblock5", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK6, new MultiblockDefinition("test_multiblock6", List.of(
+        context.register(TEST_MULTIBLOCK6, new MultiblockDefinition("test_multiblock6", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK7, new MultiblockDefinition("test_multiblock7", List.of(
+        context.register(TEST_MULTIBLOCK7, new MultiblockDefinition("test_multiblock7", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK8, new MultiblockDefinition("test_multiblock7", List.of(
+        context.register(TEST_MULTIBLOCK8, new MultiblockDefinition("test_multiblock7", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-        register(context, TEST_MULTIBLOCK9, new MultiblockDefinition("test_multiblock7", List.of(
+        context.register(TEST_MULTIBLOCK9, new MultiblockDefinition("test_multiblock7", List.of(
                 new MultiblockPart("test_part",
                         List.of(Blocks.COBBLESTONE),
                         1, 3, 3, 3, 1, 3))));
-    }
-
-    private static void register(BootstapContext<MultiblockDefinition> context, ResourceKey<MultiblockDefinition> key, MultiblockDefinition mbDef){
-        context.register(key, mbDef);
     }
 
     private static ResourceKey<MultiblockDefinition> createKey(String name){

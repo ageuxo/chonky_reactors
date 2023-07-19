@@ -6,14 +6,11 @@ import io.github.ageuxo.chonkyreactors.util.ModUtils;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.RegistryBuilder;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class MultiblockRegistry {
     private static final Logger LOGGER = LogUtils.getLogger();
@@ -22,7 +19,6 @@ public class MultiblockRegistry {
     public static final ResourceKey<Registry<MultiblockDefinition>> KEY = ResourceKey.createRegistryKey(ModUtils.modRL("multiblocks"));
 
     public static final DeferredRegister<MultiblockDefinition> MB_DEFS = DeferredRegister.create(ModUtils.modRL("multiblocks"), ChonkyReactors.MODID);
-    public static final Supplier<IForgeRegistry<MultiblockDefinition>> REGISTRY = MB_DEFS.makeRegistry(RegistryBuilder::new);
 
 
 
