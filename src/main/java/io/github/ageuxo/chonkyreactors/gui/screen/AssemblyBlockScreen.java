@@ -3,6 +3,7 @@ package io.github.ageuxo.chonkyreactors.gui.screen;
 import io.github.ageuxo.chonkyreactors.gui.menu.AbstractMachineMenu;
 import io.github.ageuxo.chonkyreactors.gui.widgets.BarWidget;
 import io.github.ageuxo.chonkyreactors.gui.widgets.PlayerInventoryWidget;
+import io.github.ageuxo.chonkyreactors.util.DataType;
 import io.github.ageuxo.chonkyreactors.util.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -48,14 +49,14 @@ public class AssemblyBlockScreen extends AbstractMachineScreen<AbstractMachineMe
 
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        barWidget.updateWidget(menu.getCurrentEnergy(), menu.getMaxEnergy());
+        barWidget.updateWidget(menu.getData(DataType.ENERGY), menu.getData(DataType.ENERGY_CAPACITY));
         super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
         renderMouseCoords(guiGraphics, pMouseX, pMouseY);
     }
 
     private void renderMouseCoords(GuiGraphics guiGraphics, int mouseX, int mouseY){
         guiGraphics.drawString( Minecraft.getInstance().font, mouseX + ":" + mouseY, width-50, height-10, 500);
-        guiGraphics.drawString( Minecraft.getInstance().font, "Scaled: " + menu.getScaledProgress(26) + " Progress: " + menu.getCurrentProgress(), width-120, height-30, 500);
-        guiGraphics.drawString( Minecraft.getInstance().font, "Scaled: " + menu.getScaledEnergy(barWidget.getHeight()) + " Energy: " + menu.getCurrentEnergy(), width-140, height-50, 500);
+        guiGraphics.drawString( Minecraft.getInstance().font, "Scaled: " + menu.getScaledProgress(26) + " Progress: " + menu.getData(DataType.PROGRESS), width-120, height-30, 500);
+        guiGraphics.drawString( Minecraft.getInstance().font, "Scaled: " + menu.getScaledEnergy(barWidget.getHeight()) + " Energy: " + menu.getData(DataType.ENERGY), width-140, height-50, 500);
     }
 }

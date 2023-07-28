@@ -7,7 +7,7 @@ import io.github.ageuxo.chonkyreactors.item.crafting.AssemblyRecipe;
 import io.github.ageuxo.chonkyreactors.item.crafting.ModRecipes;
 import io.github.ageuxo.chonkyreactors.item.crafting.SimpleMachineContainer;
 import io.github.ageuxo.chonkyreactors.item.crafting.StackIngredient;
-import io.github.ageuxo.chonkyreactors.util.WrappedItemHandler;
+import io.github.ageuxo.chonkyreactors.util.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -18,7 +18,6 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
@@ -66,7 +65,7 @@ public class AssemblyBlockEntity extends BlockEntity implements MenuProvider {
     private LazyOptional<EnergyStorage> lazyEnergyStorage = LazyOptional.empty();
 
 
-    protected final ContainerData data;
+    protected final MachineData data;
     private static final RecipeManager.CachedCheck<SimpleMachineContainer, AssemblyRecipe> quickCheck = RecipeManager.createCheck(ModRecipes.Types.ASSEMBLY_RECIPE_TYPE.get());
     private int progress = 0;
     private int maxProgress = 100;
@@ -91,32 +90,11 @@ public class AssemblyBlockEntity extends BlockEntity implements MenuProvider {
         this.inputSlotCount = inputSize;
         this.extraSlotCount = extraSize;
         this.outputSlotCount = outputSize;
-
-        this.data = new ContainerData() {
-            @Override
-            public int get(int pIndex) {
-                return switch (pIndex){
-                    case 0 -> AssemblyBlockEntity.this.progress;
-                    case 1 -> AssemblyBlockEntity.this.maxProgress;
-                    case 2 -> AssemblyBlockEntity.this.energyStorage.getEnergyStored();
-                    case 3 -> AssemblyBlockEntity.this.energyStorage.getMaxEnergyStored();
-                    default -> 0;
-                };
-            }
-
-            @Override
-            public void set(int pIndex, int pValue) {
-                switch (pIndex){
-                    case 0 -> AssemblyBlockEntity.this.progress = pValue;
-                    case 1 -> AssemblyBlockEntity.this.maxProgress = pValue;
-                }
-            }
-
-            @Override
-            public int getCount() {
-                return 4;
-            }
-        };
+        this.data = new MachineData()
+            .add(DataType.PROGRESS, this::getProgress, this::setProgress)
+            .add(DataType.MAX_PROGRESS, this::getProgressMax, this::setProgressMax)
+            .add(DataType.ENERGY, energyStorage::getEnergyStored, null)
+            .add(DataType.ENERGY_CAPACITY, energyStorage::getMaxEnergyStored, null);
     }
 
 

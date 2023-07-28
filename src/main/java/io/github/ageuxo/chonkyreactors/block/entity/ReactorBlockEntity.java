@@ -28,9 +28,12 @@ public class ReactorBlockEntity extends BlockEntity implements MenuProvider {
     public ReactorBlockEntity(BlockPos pPos, BlockState pBlockState, ReactorTier tier) {
         super(ModBlockEntities.REACTOR_BLOCK_ENTITY.get(), pPos, pBlockState);
         this.reactorTier = tier;
-    }
-    public ReactorBlockEntity(BlockPos pPos, BlockState pBlockState) {
-        this(pPos, pBlockState, ReactorTier.BASIC);
+
+        this.data = new MachineData()
+                .add(DataType.ENERGY, energyStorage::getEnergyStored, null)
+                .add(DataType.ENERGY_CAPACITY, energyStorage::getMaxEnergyStored, null)
+                .add(DataType.FLUID_AMOUNT, fluidStorage::getFluidAmount, null)
+                .add(DataType.FLUID_CAPACITY, fluidStorage::getCapacity, null);
     }
 
     @Override
