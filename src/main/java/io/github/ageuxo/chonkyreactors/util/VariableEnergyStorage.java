@@ -26,6 +26,10 @@ public class VariableEnergyStorage extends EnergyStorage {
         this.maxReceive = newMaxReceive;
     }
 
+    public void setEnergy(int newEnergy){
+        this.energy = newEnergy;
+    }
+
     @Override
     public void deserializeNBT(Tag nbt) {
         if (nbt instanceof CompoundTag tag){
