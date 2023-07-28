@@ -4,7 +4,8 @@
   "block.chonky_reactors.assembly_block": "Assembly Block",
 
   "gui.chonky_reactors.assembly_block.name": "Assembler",
-  "gui.chonky_reactors.widget.energy.tooltip": "%s / %s FE",
+  "gui.chonky_reactors.widget.bar.energy": "%s / %s FE",
+  "gui.chonky_reactors.widget.bar.fluid": "%s / %s mB",
 
   "command.chonky_reactors.multiblock.result": "||--  Pg %s/%s Showing entries %s to %s",
   "command.chonky_reactors.multiblock.invalid_page": "Invalid page: %s Page must be less than %s",
