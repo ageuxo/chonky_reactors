@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 
 import java.util.Map;
 
-public class AssemblyBlockEntity extends BlockEntity implements MenuProvider {
+public class AssemblyBlockEntity extends BlockEntity implements MenuProvider, EnergyDataProvider, ProgressDataProvider {
     private final ItemStackHandler itemHandler = new ItemStackHandler(5){
         @Override
         protected void onContentsChanged(int slot) {
@@ -62,7 +62,7 @@ public class AssemblyBlockEntity extends BlockEntity implements MenuProvider {
                     Direction.WEST, LazyOptional.of(() -> new WrappedItemHandler(itemHandler, (index) -> index == 0 || index == 1,
                             (index, stack) -> itemHandler.isItemValid(0, stack) || itemHandler.isItemValid(1, stack))));
 
-    private final EnergyStorage energyStorage = new EnergyStorage(8000, 256, 256, 8000);
+    private final VariableEnergyStorage energyStorage = new VariableEnergyStorage(8000, 256, 256, 8000);
     private LazyOptional<EnergyStorage> lazyEnergyStorage = LazyOptional.empty();
 
 
@@ -298,5 +298,30 @@ public class AssemblyBlockEntity extends BlockEntity implements MenuProvider {
 
     private static boolean isFueled(AssemblyBlockEntity entity){
         return entity.energyStorage.getEnergyStored() >= entity.currentRecipe.getEnergyCost();
+    }
+
+    @Override
+    public int getProgress() {
+        return progress;
+    }
+
+    @Override
+    public int getProgressMax() {
+        return maxProgress;
+    }
+
+    @Override
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    @Override
+    public void setProgressMax(int maxProgress) {
+        this.maxProgress = maxProgress;
+    }
+
+    @Override
+    public VariableEnergyStorage getSourceEnergy() {
+        return this.energyStorage;
     }
 }
