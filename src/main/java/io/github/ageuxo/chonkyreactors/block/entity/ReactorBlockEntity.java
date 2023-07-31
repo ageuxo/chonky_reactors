@@ -2,7 +2,9 @@ package io.github.ageuxo.chonkyreactors.block.entity;
 
 import io.github.ageuxo.chonkyreactors.ReactorTier;
 import io.github.ageuxo.chonkyreactors.gui.menu.ReactorMenu;
-import io.github.ageuxo.chonkyreactors.util.*;
+import io.github.ageuxo.chonkyreactors.util.EnergyDataProvider;
+import io.github.ageuxo.chonkyreactors.util.FluidDataProvider;
+import io.github.ageuxo.chonkyreactors.util.VariableEnergyStorage;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -11,6 +13,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.util.LazyOptional;
@@ -28,7 +31,7 @@ public class ReactorBlockEntity extends BlockEntity implements MenuProvider, Ene
     private LazyOptional<EnergyStorage> lazyEnergyStorage = LazyOptional.empty();
     private final FluidTank fluidStorage = new FluidTank(8000);
     private LazyOptional<FluidTank> lazyFluidStorage = LazyOptional.empty();
-    protected final TypedContainerData<DataType> data;
+    protected final ContainerData data;
 
     public ReactorBlockEntity(BlockPos pPos, BlockState pBlockState) {
         this(pPos, pBlockState, ReactorTier.BASIC);
@@ -37,9 +40,34 @@ public class ReactorBlockEntity extends BlockEntity implements MenuProvider, Ene
     public ReactorBlockEntity(BlockPos pPos, BlockState pBlockState, ReactorTier tier) {
         super(ModBlockEntities.REACTOR_BLOCK_ENTITY.get(), pPos, pBlockState);
         this.reactorTier = tier;
-    }
-    public ReactorBlockEntity(BlockPos pPos, BlockState pBlockState) {
-        this(pPos, pBlockState, ReactorTier.BASIC);
+
+        this.data = new ContainerData() {
+            @Override
+            public int get(int pIndex) {
+                return switch (pIndex){
+                    case 0 -> ReactorBlockEntity.this.getEnergy();
+                    case 1 -> ReactorBlockEntity.this.getEnergyCapacity();
+                    case 2 -> ReactorBlockEntity.this.getFluidAmount();
+                    case 3 -> ReactorBlockEntity.this.getFluidCapacity();
+                    default -> 0;
+                };
+            }
+
+            @Override
+            public void set(int pIndex, int pValue) {
+                switch (pIndex){
+                    case 0 -> ReactorBlockEntity.this.setEnergy(pValue);
+                    case 1 -> ReactorBlockEntity.this.setEnergyCapacity(pValue);
+                    case 2 -> ReactorBlockEntity.this.setFluidAmount(pValue);
+                    case 3 -> ReactorBlockEntity.this.setFluidCapacity(pValue);
+                }
+            }
+
+            @Override
+            public int getCount() {
+                return 4;
+            }
+        };
     }
 
     @Override

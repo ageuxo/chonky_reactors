@@ -19,6 +19,10 @@ public class ModBlockEntities {
             .register("reactor_block_entity", ()->BlockEntityType.Builder.of(ReactorBlockEntity::new,
                     ModBlocks.REACTOR_CONTROLLER_BLOCK.get()).build(null));
 
+    public static final RegistryObject<BlockEntityType<ReactorSubBlockEntity>> REACTOR_SUB_ENTITY = BLOCK_ENTITIES
+            .register("reactor_sub_block_entity", ()->BlockEntityType.Builder.of(ReactorSubBlockEntity::new,
+                    ModBlocks.REACTOR_SUB_BLOCK.get()).build(null));
+
     public static void register(IEventBus eventBus){
         BLOCK_ENTITIES.register(eventBus);
     }

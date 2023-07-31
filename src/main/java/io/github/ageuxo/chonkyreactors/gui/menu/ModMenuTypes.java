@@ -14,6 +14,7 @@ public class ModMenuTypes {
     public static final DeferredRegister<MenuType<?>> MENUS = DeferredRegister.create(ForgeRegistries.MENU_TYPES, ChonkyReactors.MODID);
 
     public static final RegistryObject<MenuType<AbstractMachineMenu>> ASSEMBLY_BLOCK_MENU = registerMenuType(AssemblyBlockMenu::new, "assembly_block_menu");
+    public static final RegistryObject<MenuType<ReactorMenu>> REACTOR_MENU = registerMenuType(ReactorMenu::new, "reactor_menu");
 
 
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(IContainerFactory<T> factory, String name){

@@ -3,6 +3,7 @@ package io.github.ageuxo.chonkyreactors;
 import com.mojang.logging.LogUtils;
 import io.github.ageuxo.chonkyreactors.gui.menu.ModMenuTypes;
 import io.github.ageuxo.chonkyreactors.gui.screen.AssemblyBlockScreen;
+import io.github.ageuxo.chonkyreactors.gui.screen.ReactorScreen;
 import io.github.ageuxo.chonkyreactors.multiblock.MultiblockDefinition;
 import io.github.ageuxo.chonkyreactors.multiblock.MultiblockRegistry;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -29,7 +30,11 @@ public class ModBusEvents {
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event){
             event.enqueueWork(
-                    ()-> MenuScreens.register(ModMenuTypes.ASSEMBLY_BLOCK_MENU.get(), AssemblyBlockScreen::new));
+                    ()-> {
+                        MenuScreens.register(ModMenuTypes.ASSEMBLY_BLOCK_MENU.get(), AssemblyBlockScreen::new);
+                        MenuScreens.register(ModMenuTypes.REACTOR_MENU.get(), ReactorScreen::new);
+                    }
+            );
         }
     }
 }
