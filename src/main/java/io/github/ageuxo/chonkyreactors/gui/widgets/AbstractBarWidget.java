@@ -30,7 +30,7 @@ public abstract class AbstractBarWidget extends AbstractWidget {
     public abstract void init();
 
     public void updateWidget(int currentValue, int maxValue) {
-        int scaledValue = currentValue * this.getHeight() / maxValue;
+        int scaledValue = currentValue * this.getHeight() / Math.max(maxValue, 1);
         this.barOffset = this.height - scaledValue;
         this.setTooltip(Tooltip.create(Component.translatable(this.barLocale, currentValue, maxValue)));
     }
