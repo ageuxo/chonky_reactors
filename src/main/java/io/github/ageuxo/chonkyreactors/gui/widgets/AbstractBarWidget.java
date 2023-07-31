@@ -15,6 +15,9 @@ public abstract class AbstractBarWidget extends AbstractWidget {
     protected final int outlineColour;
     protected int barOffset;
     protected String barLocale;
+    private int prevValue;
+    private int prevMaxValue;
+    private boolean requiresTooltipUpdate = false;
 
     public AbstractBarWidget(int pX, int pY, int pWidth, int pHeight, Component pMessage, int outlineColour) {
         super(pX, pY, pWidth, pHeight, pMessage);
@@ -27,12 +30,26 @@ public abstract class AbstractBarWidget extends AbstractWidget {
 
     public abstract void renderBar(@NotNull GuiGraphics guiGraphics);
 
-    public abstract void init();
-
     public void updateWidget(int currentValue, int maxValue) {
         int scaledValue = currentValue * this.getHeight() / Math.max(maxValue, 1);
         this.barOffset = this.height - scaledValue;
-        this.setTooltip(Tooltip.create(Component.translatable(this.barLocale, currentValue, maxValue)));
+        if (this.requiresTooltipUpdate || currentValue != this.prevValue || maxValue != prevMaxValue) {
+            this.prevValue = currentValue;
+            this.prevMaxValue = maxValue;
+            this.setTooltip(Tooltip.create(this.createTooltipComponent()));
+        }
+    }
+
+    protected Component createTooltipComponent(){
+        return Component.translatable(this.barLocale, prevValue, prevMaxValue);
+    }
+
+    protected void updateTooltip(){
+        this.requiresTooltipUpdate = true;
+    }
+
+    protected boolean shouldUpdateTooltip(){
+        return this.requiresTooltipUpdate;
     }
 
     @Override

@@ -34,7 +34,4 @@ public class EnergyBarWidget extends AbstractBarWidget {
                 gradientFrom, gradientTo);
     }
 
-    @Override
-    public void init() {}
-
 }
