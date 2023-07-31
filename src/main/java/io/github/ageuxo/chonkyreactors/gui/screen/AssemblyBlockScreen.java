@@ -1,7 +1,7 @@
 package io.github.ageuxo.chonkyreactors.gui.screen;
 
 import io.github.ageuxo.chonkyreactors.gui.menu.AbstractMachineMenu;
-import io.github.ageuxo.chonkyreactors.gui.widgets.BarWidget;
+import io.github.ageuxo.chonkyreactors.gui.widgets.EnergyBarWidget;
 import io.github.ageuxo.chonkyreactors.gui.widgets.PlayerInventoryWidget;
 import io.github.ageuxo.chonkyreactors.util.ModUtils;
 import net.minecraft.client.Minecraft;
@@ -13,7 +13,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class AssemblyBlockScreen extends AbstractMachineScreen<AbstractMachineMenu> {
     private static final ResourceLocation TEXTURE = ModUtils.modRL("textures/gui/container/assembly_block_gui.png");
-    private BarWidget barWidget;
+    private EnergyBarWidget barWidget;
 
 
     public AssemblyBlockScreen(AbstractMachineMenu pMenu, Inventory pPlayerInventory, Component pTitle) {
@@ -24,7 +24,7 @@ public class AssemblyBlockScreen extends AbstractMachineScreen<AbstractMachineMe
     protected void init() {
         super.init();
         this.addRenderableOnly(new PlayerInventoryWidget(leftPos, topPos+80));
-        this.barWidget = new BarWidget(leftPos-40,topPos);
+        this.barWidget = new EnergyBarWidget(leftPos-40,topPos);
         this.addRenderableWidget(barWidget);
     }
 
