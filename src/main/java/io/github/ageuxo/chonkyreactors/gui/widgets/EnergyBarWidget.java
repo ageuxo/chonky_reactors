@@ -8,7 +8,7 @@ import org.jetbrains.annotations.NotNull;
 public class EnergyBarWidget extends AbstractBarWidget {
     private static final int DEFAULT_FROM_GRADIENT = FastColor.ARGB32.color(255, 200, 0, 0);
     private static final int DEFAULT_TO_GRADIENT = FastColor.ARGB32.color(255, 255, 0, 0);
-    private static final String LOCALE_KEY = "gui.chonky_reactors.widget.energy.tooltip";
+    private static final String LOCALE_KEY = "gui.chonky_reactors.widget.bar.energy";
     private final int gradientFrom;
     private final int gradientTo;
 
