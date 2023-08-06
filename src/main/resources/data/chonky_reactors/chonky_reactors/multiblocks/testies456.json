@@ -2,7 +2,7 @@
   "name": "testies456",
   "parts": [
     {
-      "blocks": [
+      "entries": [
         "minecraft:cobblestone"
       ],
       "maxX": 3,
@@ -14,7 +14,7 @@
       "name": "cobble_wall"
     },
     {
-      "blocks": [
+      "entries": [
         "minecraft:glowstone"
       ],
       "maxX": 3,

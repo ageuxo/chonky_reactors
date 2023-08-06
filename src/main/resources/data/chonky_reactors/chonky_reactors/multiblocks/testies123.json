@@ -2,7 +2,7 @@
   "name": "testies123",
   "parts": [
     {
-      "blocks": [
+      "entries": [
         "minecraft:cobblestone"
       ],
       "maxX": 3,

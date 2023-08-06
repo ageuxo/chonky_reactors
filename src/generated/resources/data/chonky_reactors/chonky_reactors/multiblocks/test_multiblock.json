@@ -2,7 +2,7 @@
   "name": "test_multiblock",
   "parts": [
     {
-      "blocks": [
+      "entries": [
         "minecraft:cobblestone"
       ],
       "maxX": 3,

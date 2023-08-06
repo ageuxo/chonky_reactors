@@ -1,17 +1,17 @@
 {
-  "name": "test_multiblock6",
+  "name": "test_reactor_1",
   "parts": [
     {
       "entries": [
-        "minecraft:cobblestone"
+        "#chonky_reactors:reactor_tier_1"
       ],
       "maxX": 3,
       "maxY": 3,
       "maxZ": 3,
       "minX": 1,
-      "minY": 3,
+      "minY": 1,
       "minZ": 1,
-      "name": "test_part"
+      "name": "reactor_face_test"
     }
   ]
 }
