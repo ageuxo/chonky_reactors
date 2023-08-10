@@ -1,13 +1,16 @@
 package io.github.ageuxo.chonkyreactors.util;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.github.ageuxo.chonkyreactors.ChonkyReactors;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
-import org.antlr.runtime.misc.IntArray;
 
 public class ModUtils {
     public static ResourceLocation modRL(String path){
@@ -32,4 +35,10 @@ public class ModUtils {
             guiGraphics.blit(texture, x, y, 0, 0, width, height);
         }
     }
+
+    public static final Codec<AABB> AABB_CODEC = RecordCodecBuilder.create(instance->instance.group(
+            BlockPos.CODEC.fieldOf("pos1").forGetter(aabb -> new BlockPos((int) aabb.minX, (int) aabb.minY, (int) aabb.minZ)),
+            BlockPos.CODEC.fieldOf("pos2").forGetter(aabb -> new BlockPos((int) aabb.maxX, (int) aabb.maxY, (int) aabb.maxZ))
+    ).apply(instance, AABB::new));
+
 }

@@ -7,6 +7,7 @@ import io.github.ageuxo.chonkyreactors.gui.menu.ModMenuTypes;
 import io.github.ageuxo.chonkyreactors.item.ModItems;
 import io.github.ageuxo.chonkyreactors.item.crafting.ModRecipes;
 import io.github.ageuxo.chonkyreactors.multiblock.MultiblockRegistry;
+import io.github.ageuxo.chonkyreactors.network.PacketHandler;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
@@ -20,6 +21,7 @@ public class ChonkyReactors {
     public ChonkyReactors(){
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
+        PacketHandler.register();
         ModBlocks.register(modEventBus);
         ModItems.register(modEventBus);
         ModBlockEntities.register(modEventBus);
